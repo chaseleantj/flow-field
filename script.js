@@ -899,7 +899,7 @@ for(var i = 0; i < 500; i++){
     particleStream.push(new ArtificialParticle(0, 0));
 }
 
-setTimeout(animate, 10);
+setTimeout(animate, 1000);
 
 
 
