@@ -1,0 +1,557 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script type="text/javascript" id="MathJax-script"
+    src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js">
+    </script>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div id="display">
+        <canvas id="grid-canvas"></canvas>
+        <canvas id="vector-canvas"></canvas>
+        <canvas id="particle-canvas"></canvas>
+    </div>
+    <div id="maximize-button-container">
+        <div id="maximize-button" class="clickable-svg">
+            <svg id="expand-right-svg" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
+                <path d="M15.2928932,12 L12.1464466,8.85355339 C11.9511845,8.65829124 11.9511845,8.34170876 12.1464466,8.14644661 C12.3417088,7.95118446 12.6582912,7.95118446 12.8535534,8.14644661 L16.8535534,12.1464466 C17.0488155,12.3417088 17.0488155,12.6582912 16.8535534,12.8535534 L12.8535534,16.8535534 C12.6582912,17.0488155 12.3417088,17.0488155 12.1464466,16.8535534 C11.9511845,16.6582912 11.9511845,16.3417088 12.1464466,16.1464466 L15.2928932,13 L4.5,13 C4.22385763,13 4,12.7761424 4,12.5 C4,12.2238576 4.22385763,12 4.5,12 L15.2928932,12 Z M19,5.5 C19,5.22385763 19.2238576,5 19.5,5 C19.7761424,5 20,5.22385763 20,5.5 L20,19.5 C20,19.7761424 19.7761424,20 19.5,20 C19.2238576,20 19,19.7761424 19,19.5 L19,5.5 Z"/>
+            </svg>
+        </div>
+    </div>
+    <div id="container">
+        <div id="menu">
+            <div id="minimize-button-container">
+                <div id="minimize-button" type="button" class="clickable-svg">
+                    <svg id="collapse-left-svg" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
+                        <path d="M8.70710678,12 L19.5,12 C19.7761424,12 20,12.2238576 20,12.5 C20,12.7761424 19.7761424,13 19.5,13 L8.70710678,13 L11.8535534,16.1464466 C12.0488155,16.3417088 12.0488155,16.6582912 11.8535534,16.8535534 C11.6582912,17.0488155 11.3417088,17.0488155 11.1464466,16.8535534 L7.14644661,12.8535534 C6.95118446,12.6582912 6.95118446,12.3417088 7.14644661,12.1464466 L11.1464466,8.14644661 C11.3417088,7.95118446 11.6582912,7.95118446 11.8535534,8.14644661 C12.0488155,8.34170876 12.0488155,8.65829124 11.8535534,8.85355339 L8.70710678,12 L8.70710678,12 Z M4,5.5 C4,5.22385763 4.22385763,5 4.5,5 C4.77614237,5 5,5.22385763 5,5.5 L5,19.5 C5,19.7761424 4.77614237,20 4.5,20 C4.22385763,20 4,19.7761424 4,19.5 L4,5.5 Z"/>
+                    </svg>
+                </div>
+            </div>
+            <div class="heading">
+                <div class="instructions">
+                    <h1>Flow field</h1>
+                    <p>Visualize particles moving in a velocity field.</p>
+                    <p>Click on the options to show more details.</p>
+                    <!-- <p>Double click anywhere to hide the menu.</p> -->
+                </div>
+                <div class="settings" id="change-velocity-field">
+                    <h2 class="settings-title">Change velocity field</h2>
+                    <svg class="settings-svg clickable-svg" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20">
+                        <path d="M1 13.75l1.5 1.5 7.5-7.5 7.5 7.5 1.5-1.5-9-9-9 9z"/>
+                    </svg>
+                    <div class="form-container">
+                        <div id="velocity-field-display-container">
+                            <p class="equation" id="velocity-field-display">\(\mathbf{F}(x,y)=\left&lt\right&gt\)</p>
+                        </div>
+                        <div id="velocity-field-controls">
+                            <input id="velocity-field-input" type="text" placeholder="Insert equation here. ENTER to submit." spellcheck="false" enterkeyhint="done">
+                            <div id="tooltip">
+                                <div id="normal-tooltip">
+                                    <p id="input-message">Click <a href="#" type="button" class="open-modal-button" id="instructions-open-modal-button">here</a> for instructions.
+                                    Use presets <a href="#" type="button" class="open-modal-button" id="preset-open-modal-button">here</a>.</p>
+                                </div>
+                                <div id="error-tooltip" class="hidden">
+                                    <img src="resources/error.png" class="error-img"></img>
+                                    <p id="input-error-message">Invalid input. Need <a href="#" type="button" class="open-modal-button" id="help-open-modal-button">help?</a> Or <a href="#" type="button" id="go-back-button">go back</a>.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="settings-container">
+                <div class="settings" id="particle-settings">
+                    <h2 class="settings-title">Particle settings</h2>
+                    <svg class="settings-svg clickable-svg" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20">
+                        <path d="M1 13.75l1.5 1.5 7.5-7.5 7.5 7.5 1.5-1.5-9-9-9 9z"/>
+                    </svg>
+                    <p>Particles are the colored dots on screen.</p>
+                    <div class="control-panel">
+                        <div class="control on-off">
+                            <h2>Show particles</h2>
+                            <!-- <p>Shows dots moving inside the flow field.</p> -->
+                            <div class="switch-container">
+                                <p class="switch-label">OFF</p>
+                                <label class="switch">
+                                    <input type="checkbox" id="show-particles" checked>
+                                    <span class="switch-slider"></span>
+                                </label>
+                                <p class="switch-label">ON</p>
+                            </div>
+                        </div>
+                        <div class="control">
+                            <h2>Particle count</h2>
+                            <p>Controls the number of particles.</p>
+                            <div class="slide-container">
+                                <input type="range" min="0" max="2000" value="200" class="slider particle-slider" id="particle-count">
+                                <p class="slider-display" id="particle-count-display"></p>
+                            </div>
+                        </div>
+                        <div class="control">
+                            <h2>Particle size</h2>
+                            <p>Controls the maximum particle size.</p>
+                            <div class="slide-container">
+                                <input type="range" min="1" max="20" value="5" class="slider particle-slider" id="particle-size">
+                                <p class="slider-display" id="particle-size-display"></p>
+                            </div>
+                        </div>
+                        <div class="control">
+                            <h2>Color offset</h2>
+                            <p>Changes the color of the particles.</p>
+                            <div class="slide-container">
+                                <input type="range" min="0" max="360" value="0" class="slider particle-slider" id="color-offset">
+                                <p class="slider-display" id="color-offset-display"></p>
+                            </div>
+                        </div>
+                        <div class="control radio-3">
+                            <h2>Color options</h2>
+                            <p>Colors particles based on movement.</p>
+                            <label class="radio-container">
+                                <p>Uniform color</p>
+                                <input type="radio" name="radio" class="color-options" id="uniform-color">
+                                <span class="radio-checkmark"></span>
+                            </label>
+                            <label class="radio-container">
+                                <p>Color by angle</p>
+                                <input type="radio" name="radio" class="color-options" id="color-by-angle" checked>
+                                <span class="radio-checkmark"></span>
+                            </label>
+                            <label class="radio-container">
+                                <p>Color by speed</p>
+                                <input type="radio" name="radio" class="color-options" id="color-by-speed">
+                                <span class="radio-checkmark"></span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="settings-container">
+                <div class="settings" id="vector-settings">
+                    <h2 class="settings-title">Vector settings</h2>
+                    <svg class="settings-svg clickable-svg" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20">
+                        <path d="M1 13.75l1.5 1.5 7.5-7.5 7.5 7.5 1.5-1.5-9-9-9 9z"/>
+                    </svg>
+                    <p>Vectors are the arrows on screen.</p>
+                    <p>They indicate the direction of the vector field.</p>
+                    <div class="control-panel">
+                        <div class="control on-off">
+                            <h2>Show vectors</h2>
+                            <!-- <p>Shows arrows representing the vector field.</p> -->
+                            <div class="switch-container">
+                                <p class="switch-label">OFF</p>
+                                <label class="switch">
+                                    <input type="checkbox" id="show-vectors">
+                                    <span class="switch-slider"></span>
+                                </label>
+                                <p class="switch-label">ON</p>
+                            </div>
+                        </div>
+                        <div class="control">
+                            <h2>Normalize vectors</h2>
+                            <p>Draw all vectors with equal length.</p>
+                            <div class="switch-container">
+                                <p class="switch-label">OFF</p>
+                                <label class="switch">
+                                    <input type="checkbox" id="normalize-vectors">
+                                    <span class="switch-slider"></span>
+                                </label>
+                                <p class="switch-label">ON</p>
+                            </div>
+                        </div>
+                        <div class="control">
+                            <h2>Vector density</h2>
+                            <p>Controls how many vectors are drawn.</p>
+                            <div class="slide-container">
+                                <input type="range" min="0" max="2" value="1" class="slider vector-slider" id="vector-density">
+                                <p class="vector-display" id="vector-density-display"></p>
+                            </div>
+                        </div>
+                        <div class="control">
+                            <h2>Vector length</h2>
+                            <p>Controls each vector's relative length.</p>
+                            <div class="slide-container">
+                                <input type="range" min="0" max="100" value="30" class="slider vector-slider" id="vector-length">
+                                <p class="vector-display" id="vector-length-display"></p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="settings-container">
+                <div class="settings" id="grid-settings">
+                    <h2 class="settings-title">Grid settings</h2>
+                    <svg class="settings-svg clickable-svg" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20">
+                        <path d="M1 13.75l1.5 1.5 7.5-7.5 7.5 7.5 1.5-1.5-9-9-9 9z"/>
+                    </svg>
+                    <p>The coordinate grid shows the position of particles and vectors in the plane.</p>
+                    <div class="control on-off">
+                        <h2>Show grid</h2>
+                        <div class="switch-container">
+                            <p class="switch-label">OFF</p>
+                            <label class="switch">
+                                <input type="checkbox" id="show-grid">
+                                <span class="switch-slider"></span>
+                            </label>
+                            <p class="switch-label">ON</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="settings-container">
+                <div class="settings" id="tools">
+                    <h2 class="settings-title">Tools</h2>
+                    <svg class="settings-svg clickable-svg" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20">
+                        <path d="M1 13.75l1.5 1.5 7.5-7.5 7.5 7.5 1.5-1.5-9-9-9 9z"/>
+                    </svg>
+                    <p>Once you turn them on, move your mouse to the middle of the particle field to activate.</p>
+                    <div class="control">
+                        <h2>Shoot particles from cursor</h2>
+                        <p>Release particles from the cursor.</p>
+                        <div class="switch-container">
+                            <p class="switch-label">OFF</p>
+                            <label class="switch">
+                                <input type="checkbox" id="particle-stream">
+                                <span class="switch-slider"></span>
+                            </label>
+                            <p class="switch-label">ON</p>
+                        </div>
+                    </div>
+                    <div class="control">
+                        <h2>Show value at cursor</h2>
+                        <p>Shows the value of the vector field.</p>
+                        <div class="switch-container">
+                            <p class="switch-label">OFF</p>
+                            <label class="switch">
+                                <input type="checkbox" id="show-vector-field-details">
+                                <span class="switch-slider"></span>
+                            </label>
+                            <p class="switch-label">ON</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="settings-container">
+                <div class="settings" id="notes">
+                    <h2 class="settings-title">Notes</h2>
+                    <svg class="settings-svg clickable-svg" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20">
+                        <path d="M1 13.75l1.5 1.5 7.5-7.5 7.5 7.5 1.5-1.5-9-9-9 9z"/>
+                    </svg>
+                    <p>Vector fields are beautiful. This program aims to make them accessible in a fun and interactive way.</p>
+                    <p>There are still a few <a href="#" type="button" class="open-modal-button" id="limitations-open-modal-button">limitations</a> to the program, which will hopefully be addressed in a future update.</p>
+                    <p>Flow Field Version 1.0 by Chase Lean 27/3/2022</p>
+                </div>
+            </div>
+            <p id="placeholder"></p>
+        </div>
+        <div id="handle"></div>
+    </div>
+
+    <div class="modal-container hidden" id="instructions-modal-container">
+        <div class="modal">
+            <div class="close-button-align">
+                <div class="close-button-container">
+                    <svg class="clickable-svg close-modal-svg" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg">
+                        <style>.cls-1{fill:none;}</style>
+                        <path d="M4,29a1,1,0,0,1-.71-.29,1,1,0,0,1,0-1.42l24-24a1,1,0,1,1,1.42,1.42l-24,24A1,1,0,0,1,4,29Z"/>
+                        <path d="M28,29a1,1,0,0,1-.71-.29l-24-24A1,1,0,0,1,4.71,3.29l24,24a1,1,0,0,1,0,1.42A1,1,0,0,1,28,29Z"/>
+                        <g id="frame"><rect class="cls-1" height="32" width="32"/></g>
+                    </svg>
+                </div>
+            </div>
+            <h1>Instructions</h1>
+            <p>To change the flow field, enter an equation describing the vector field into the text box.</p>
+            <p>For example:</p>
+            <div class="input-container">
+                <img src="resources/error.png" class="error-img hidden" id="instructions-modal-error-img"></img>
+                <input id="instructions-modal-velocity-field-input" type="text" value="F(x, y) = &lt x-y, x+y &gt" placeholder="Insert equation here.  Press ENTER to submit." spellcheck="false" enterkeyhint="done">
+            </div>
+            <p>Click <a href="#" type="button" id="instructions-modal-example-button">here</a> for another example.</p>
+            <p>When you are done, press ENTER to submit.</p>
+            <div class="content-container" id="instructions-container">
+                <p>You can use the following operations:</p>
+                <div id="operations-container">
+                    <div class="shaded-column two-column">
+                        <p>Addition: x+y</p>
+                    </div>
+                    <div class="shaded-column two-column">
+                        <p>Subtraction: x-y</p>
+                    </div>
+                    <div class="shaded-column two-column">
+                        <p>Multiplication: x*y</p>
+                    </div>
+                    <div class="shaded-column two-column">
+                        <p>Division: x/y</p>
+                    </div>
+                    <div class="shaded-column two-column">
+                        <p>Exponentiation: x^y</p>
+                    </div>
+                    <div class="shaded-column two-column">
+                        <p>Factorial: x!</p>
+                    </div>
+                </div>
+                <p>You can use the following constants and mathematical functions:</p>
+                <div class="functions-container">
+                    <div class="shaded-column three-column">
+                        <p>
+                            e ≈ 2.71828<br>
+                            sin(x)<br>
+                            csc(x)<br>
+                            sinh(x)<br>
+                            arcsin(x)<br>
+                            arcsinh(x)<br>
+                            ln(x)<br>
+                            sqrt(x)<br>
+                            floor(x)<br>
+                            min(x, y, ...)<br>
+                        </p>
+                    </div>
+                    <div class="shaded-column three-column">
+                        <p>
+                            pi ≈ 3.14159<br>
+                            cos(x)<br>
+                            sec(x)<br>
+                            cosh(x)<br>
+                            arccos(x)<br>
+                            arccosh(x)<br>
+                            log2(x)<br>
+                            cbrt(x)<br>
+                            ceil(x)<br>
+                            max(x, y, ...)<br>
+                        </p>
+                    </div>
+                    <div class="shaded-column three-column">
+                        <p>
+                            abs(x)<br>
+                            tan(x)<br>
+                            cot(x)<br>
+                            tanh(x)<br>
+                            arctan(x)<br>
+                            arctanh(x)<br>
+                            log10(x)<br>
+                            sign(x)<br>
+                            round(x)<br>
+                            random(x)<br>
+                        </p>
+                    </div>
+                </div>
+                <p>All trigonometric functions take their arguments in radians. For degree input, follow this example: sin(60deg).</p>
+                <p>There is also an input shortcut:</p>
+                <div class="shaded-column">
+                    <p>Original: F(x, y) = &lt x-y, x+y &gt</p>
+                </div>
+                <div class="shaded-column">
+                    <p>Shortcut: x-y, x+y</p>
+                </div>
+                <div class="shaded-column">
+                    <p>If you provide just one component eg: &lt x &gt, then both components will be the same: &lt x, x &gt</x></p>
+                </div>
+            </div>
+            <button class="modal-button close-modal-button" id="instructions-close-modal-button">
+                Got it
+            </button>
+        </div>
+    </div>
+
+    <div class="modal-container hidden" id="preset-modal-container">
+        <div class="modal" id="preset-modal">
+            <div class="close-button-align">
+                <div class="close-button-container">
+                    <svg class="clickable-svg close-modal-svg" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg">
+                        <style>.cls-1{fill:none;}</style>
+                        <path d="M4,29a1,1,0,0,1-.71-.29,1,1,0,0,1,0-1.42l24-24a1,1,0,1,1,1.42,1.42l-24,24A1,1,0,0,1,4,29Z"/>
+                        <path d="M28,29a1,1,0,0,1-.71-.29l-24-24A1,1,0,0,1,4.71,3.29l24,24a1,1,0,0,1,0,1.42A1,1,0,0,1,28,29Z"/>
+                        <g id="frame"><rect class="cls-1" height="32" width="32"/></g>
+                    </svg>
+                </div>
+            </div>
+            <h1>Presets</h1>
+            <p>Not sure what equation to enter? Here are some beautiful presets you can choose from.</p>
+            <div class="content-container" id="preset-container">
+                <!-- <div class="preset">
+                    <div class="preset-info">
+                        <p class="equation">\(\mathbf{F}(x,y)=\left&lt\right&gt\)</p>
+                        <button class="modal-button preset-select-button">Select</button>
+                    </div>
+                </div> -->
+            </div>
+            <button class="modal-button close-modal-button" id="preset-close-modal-button">
+                Done
+            </button>
+        </div>
+    </div>
+
+    <div class="modal-container hidden" id="help-modal-container">
+        <div class="modal" id="help-modal">
+            <div class="close-button-align">
+                <div class="close-button-container">
+                    <svg class="clickable-svg close-modal-svg" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg">
+                        <style>.cls-1{fill:none;}</style>
+                        <path d="M4,29a1,1,0,0,1-.71-.29,1,1,0,0,1,0-1.42l24-24a1,1,0,1,1,1.42,1.42l-24,24A1,1,0,0,1,4,29Z"/>
+                        <path d="M28,29a1,1,0,0,1-.71-.29l-24-24A1,1,0,0,1,4.71,3.29l24,24a1,1,0,0,1,0,1.42A1,1,0,0,1,28,29Z"/>
+                        <g id="frame"><rect class="cls-1" height="32" width="32"/></g>
+                    </svg>
+                </div>
+            </div>
+            <h1>Help</h1>
+            <p>Having trouble with the input? Here are some common mistakes and how to fix them.</p>
+            <div class="content-container" id="mistake-container">
+                <div class="mistake">
+                    <p>1. Missing the asterisk (*) for multiplication</p>
+                    <div class="shaded-column">
+                        <p>Incorrect: xy, xsin(y)</p>
+                    </div>
+                    <div class="shaded-column">
+                        <p>Correct: x*y, x*sin(y)</p>
+                    </div>
+                    <div class="shaded-column">
+                        <p>(*) is not required when multiplying with constants or with parentheses.<br>For instance, 2x and 2(x) are allowed.</p>
+                    </div>
+                </div>
+                <div class="mistake">
+                    <p>2. Using an unsupported variable</p>
+                    <div class="shaded-column">
+                        <p>Letters such as z, r and theta are not allowed.</p>
+                    </div>
+                    <div class="shaded-column">
+                        <p>The only supported variables are x and y.</p>
+                    </div>
+                </div>
+                <div class="mistake">
+                    <p>3. Missing function parentheses</p>
+                    <div class="shaded-column">
+                        <p>Incorrect: sinx, sin[x], sin|x|</p>
+                    </div>
+                    <div class="shaded-column">
+                        <p>Correct: sin(x)</p>
+                    </div>
+                </div>
+                <div class="mistake">
+                    <p>4. Mismatched parentheses</p>
+                    <div class="shaded-column">
+                        <p>Incorrect: cos((x+2/3)</p>
+                    </div>
+                    <div class="shaded-column">
+                        <p>Correct: cos((x+2)/3)</p>
+                    </div>
+                </div>
+                <div class="mistake">
+                    <p>5. Making a spelling mistake</p>
+                    <div class="shaded-column">
+                        <p>Some differences in notation will be autocorrected.<br>For instance, log(x) is assumed to be ln(x). But logg(x) will return an error.</p>
+                    </div>
+                </div>
+                <div class="mistake">
+                    <p>6. Using an unsupported function or constant</p>
+                    <div class="shaded-column">
+                        <p>For instance, entering phi*x, or gamma(x) will return an error.</p>
+                    </div>
+                </div>
+                <div class="mistake">
+                    <p>7. Using an unsupported vector field notation</p>
+                    <div class="shaded-column">
+                        <p>Incorrect: F(x, y) = x*i + y*j</p>
+                    </div>
+                    <div class="shaded-column">
+                        <p>Incorrect: F(x, y) = (x, y)</p>
+                    </div>
+                    <div class="shaded-column">
+                        <p>Correct: F(x, y) = &lt x, y &gt</p>
+                    </div>
+                    <div class="shaded-column">
+                        <p>You can also directly write "x, y".</p>
+                    </div>
+                </div>
+            </div>
+            <button class="modal-button close-modal-button" id="help-close-modal-button">
+                Got it
+            </button>
+        </div>
+    </div>
+
+    <div class="modal-container hidden" id="limitations-modal-container">
+        <div class="modal" id="limitations-modal">
+            <div class="close-button-align">
+                <div class="close-button-container">
+                    <svg class="clickable-svg close-modal-svg" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg">
+                        <style>.cls-1{fill:none;}</style>
+                        <path d="M4,29a1,1,0,0,1-.71-.29,1,1,0,0,1,0-1.42l24-24a1,1,0,1,1,1.42,1.42l-24,24A1,1,0,0,1,4,29Z"/>
+                        <path d="M28,29a1,1,0,0,1-.71-.29l-24-24A1,1,0,0,1,4.71,3.29l24,24a1,1,0,0,1,0,1.42A1,1,0,0,1,28,29Z"/>
+                        <g id="frame"><rect class="cls-1" height="32" width="32"/></g>
+                    </svg>
+                </div>
+            </div>
+            <h1>Limitations</h1>
+            <p>Below are the limitations of this program and what I'll (hopefully) be working on in the future.</p>
+            <p>If you have any suggestions, please let me know!</p>
+            <div class="content-container" id="limitations-container">
+                <div class="limitation">
+                    <p>1. Pan and zoom features are not supported on mobile.</p>
+                    <div class="shaded-column">
+                        <p>Their implementation is separate from the click, drag and mouse wheel features on PC.</p>
+                    </div>
+                </div>
+                <div class="limitation">
+                    <p>2. The frame rate decreases at high particle count.</p>
+                    <div class="shaded-column">
+                        <p>Drawing lots of particles on the HTML canvas causes lag, which is especially pronounced on mobile devices. Thus, the maximum particle count is limited to 2000. A possible solution is draw the objects with the help of the GPU.</p>
+                    </div>
+                </div>
+                <div class="limitation">
+                    <p>3. The resolution of the coordinate grid is between 10^-10 and 10^10.</p>
+                    <div class="shaded-column">
+                        <p>This value was chosen to limit floating point errors.</p>
+                    </div>
+                </div>
+                <div class="limitation">
+                    <p>4. The scale on the x and y axes cannot be changed.</p>
+                    <div class="shaded-column">
+                        <p>This feature has not yet been implemented.</p>
+                    </div>
+                </div>
+                <div class="limitation">
+                    <p>5. The program can be made more user-friendly for those who are not well versed in college level mathematics or higher.</p>
+                    <div class="shaded-column">
+                        <p>A pop-up explaining vector fields in detail, as well more detailed instructions and bigger selection of presets can be added.</p>
+                    </div>
+                </div>
+                <div class="limitation">
+                    <p>6. The accuracy of the numerical approximation can be improved.</p>
+                    <div class="shaded-column">
+                        <p>Euler's method is currently used to animate the path of the particles in the velocity field. It works for providing the general shape of the vector field, but is unsuitable when high accuracy is required.</p>
+                    </div>
+                </div>
+                <div class="limitation">
+                    <p>7. The animation fails at points where the value of the vector field becomes unbounded.</p>
+                    <div class="shaded-column">
+                        <p>Weird things happen in the neighborhood of points where F approaches infinity. For example, F(x, y) = &lt tan(x), tan(y) &gt at x = pi/2. The adaptive step size provided by the Runge-Kutta-Fehlberg method is one possible approach to handle this.</p>
+                    </div>
+                </div>
+                <div class="limitation">
+                    <p>8. The maximum distance a particle can travel per frame is limited.</p>
+                    <div class="shaded-column">
+                        <p>This was implemented to reduce the damage caused by the existence of points when F is unbounded. It also results in loss of accuracy.</p>
+                    </div>
+                </div>
+            </div>
+            <button class="modal-button close-modal-button" id="limitations-close-modal-button">
+                Close
+            </button>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjs/10.1.1/math.js"></script>
+    <script src="node_modules/evaluatex/dist/evaluatex.min.js"></script>
+    <script src="autocorrect.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>
