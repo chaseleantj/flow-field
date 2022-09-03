@@ -898,6 +898,8 @@ for(var i = 0; i < MAXCOUNT; i++){
 for(var i = 0; i < 500; i++){
     particleStream.push(new ArtificialParticle(0, 0));
 }
-animate();
+
+setTimeout(animate, 10);
+
 
 
