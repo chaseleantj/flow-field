@@ -36,4 +36,5 @@ Vector fields are beautiful. This program aims to make them accessible in a fun 
 * Mobile is not supported.
 * Drawing a large number of particles causes lag.
 * The animation fails at points where the vector field becomes unbounded.
+
 They will hopefully be adressed in a future update.
