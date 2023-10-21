@@ -10,7 +10,7 @@ A tool that animates vector fields.
 * [Notes](#notes)
 
 ## Demo
-You can run the program by clicking <a href="https://chaselean.github.io/flow-field/">here</a>.
+Click <a href="https://chaseleantj.github.io/flow-field/">here</a> to use the program.
 
 ## General info
 This program animates particles in a velocity field. You can change the vector field by entering your own equation, or choose from 25 presets. Click and drag to pan, and use the mouse wheel to zoom in and out.
